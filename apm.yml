@@ -3,6 +3,7 @@ version: 1.0.0
 description: AI Agent skills for troubleshooting PostgreSQL managed by pgskipper-operator in Kubernetes
 author: Qubership
 dependencies:
-  apm: []
+  apm:
+  - IldarMinaev/troubleshooting-skill#ai-skills
   mcp: []
 scripts: {}
