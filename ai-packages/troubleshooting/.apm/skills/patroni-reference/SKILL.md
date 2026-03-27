@@ -69,9 +69,14 @@ curl -s http://localhost:8008/patroni
 | Path | Description |
 |------|-------------|
 | `/patroni/pg_node.yml` | Patroni configuration file |
-| `/var/lib/pgsql/data/postgresql_node1/` | PostgreSQL data directory (for node1) (for other nodes, change suffix of the directory) |
-| `/var/lib/pgsql/data/postgresql_node1/postgresql.conf` | PostgreSQL config |
-| `/var/lib/pgsql/data/postgresql_node1/pg_hba.conf` | Client authentication config |
+| `/var/lib/pgsql/data/postgresql_node<N>/` | PostgreSQL data directory — **`<N>` is pod-specific** (node1 → `postgresql_node1`, node2 → `postgresql_node2`, etc.) |
+| `/var/lib/pgsql/data/postgresql_node<N>/postgresql.conf` | PostgreSQL config |
+| `/var/lib/pgsql/data/postgresql_node<N>/pg_hba.conf` | Client authentication config |
+
+> **⚠️ WARNING**: The data directory suffix differs per pod. **Never** query `SHOW data_directory` on one pod and reuse the path on another pod — it will fail. Always resolve the data directory from within each pod individually:
+> ```bash
+> DATA_DIR=$(kubectl exec -n <ns> <pod> -- psql -U postgres -d postgres -tAc "SHOW data_directory;")
+> ```
 
 ## PostgreSQL Access from Inside a Pod
 

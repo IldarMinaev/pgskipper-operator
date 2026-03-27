@@ -107,14 +107,13 @@ Use **postgresql-log-analyzer** skill to check PostgreSQL logs for errors or war
 
 ## Step 7: Disk Usage Inside Pods
 
-Discover the actual data directory from PostgreSQL, then check disk usage on every Patroni pod:
+Each Patroni pod has its **own** data directory (e.g. `postgresql_node1` on node1, `postgresql_node2` on node2). Query `SHOW data_directory` **inside each pod** — never reuse the master's path across pods:
 
 ```bash
-DATA_DIR=$(kubectl exec -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -tAc "SHOW data_directory;")
-echo "Data directory: $DATA_DIR"
-
 for POD in $(kubectl get pods -n <NAMESPACE> -l app=patroni -o jsonpath='{.items[*].metadata.name}'); do
     echo "=== $POD ==="
+    DATA_DIR=$(kubectl exec -n <NAMESPACE> $POD -- psql -U postgres -d postgres -tAc "SHOW data_directory;")
+    echo "Data directory: $DATA_DIR"
     kubectl exec -n <NAMESPACE> $POD -- df -h "$DATA_DIR"
 done
 ```
