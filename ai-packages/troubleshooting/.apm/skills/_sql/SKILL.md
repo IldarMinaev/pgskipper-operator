@@ -6,7 +6,8 @@ description: Shared SQL scripts for PostgreSQL health, performance, replication,
 # PostgreSQL Troubleshooting — SQL Scripts
 
 Shared SQL scripts used by the `pgskipper-operator` skills via psql stdin redirect.
-Install alongside any individual skill so that `skills/_sql/<script>.sql` paths resolve correctly.
+
+This `_sql/` directory is deployed as a sibling to the other skill directories. After `apm install`, the SQL files are located at `<SKILLS_DIR>/_sql/<script>.sql` where `<SKILLS_DIR>` depends on your AI agent runtime (e.g., `.claude/skills/` for Claude, `.github/skills/` for Copilot).
 
 ## Contents
 
@@ -31,7 +32,7 @@ Scripts are executed via psql stdin redirect from the skill steps:
 kubectl exec -i -n <NAMESPACE> $MASTER_POD -- \
   env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials \
     -o jsonpath='{.data.password}' | base64 -d)" \
-  psql -U postgres -d postgres -f /dev/stdin < skills/_sql/health_check.sql
+  psql -U postgres -d postgres -f /dev/stdin < _sql/health_check.sql
 ```
 
-The path `skills/_sql/<script>.sql` is relative to the project root where `apm install` was run.
+The `_sql/` path above is relative to the skills installation directory. Resolve the full path based on your runtime — for example, `.claude/skills/_sql/health_check.sql` for Claude.
