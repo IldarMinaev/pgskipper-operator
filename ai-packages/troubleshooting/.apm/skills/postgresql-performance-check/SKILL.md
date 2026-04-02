@@ -26,6 +26,9 @@ See [postgresql-sql-runner skill](../postgresql-sql-runner/SKILL.md) for SQL exe
 kubectl config current-context
 MASTER_POD=$(kubectl get pods -n <NAMESPACE> -l pgtype=master -o jsonpath='{.items[0].metadata.name}')
 
+# Locate SQL scripts directory (deployed as sibling to this skill)
+SQL_DIR=$(find . -maxdepth 5 -type d -name '_sql' 2>/dev/null | head -1)
+
 # Note: Do NOT retrieve password separately - use inline retrieval in each command (see examples below)
 ```
 
