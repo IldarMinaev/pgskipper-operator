@@ -6,7 +6,7 @@ description: Shared SQL scripts for PostgreSQL health, performance, replication,
 # PostgreSQL Troubleshooting — SQL Scripts
 
 Shared SQL scripts used by the `pgskipper-operator` skills via psql stdin redirect.
-Install alongside any individual skill so that `.apm/skills/_sql/<script>.sql` paths resolve correctly.
+Install alongside any individual skill so that `skills/_sql/<script>.sql` paths resolve correctly.
 
 ## Contents
 
@@ -31,7 +31,7 @@ Scripts are executed via psql stdin redirect from the skill steps:
 kubectl exec -i -n <NAMESPACE> $MASTER_POD -- \
   env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials \
     -o jsonpath='{.data.password}' | base64 -d)" \
-  psql -U postgres -d postgres -f /dev/stdin < .apm/skills/_sql/health_check.sql
+  psql -U postgres -d postgres -f /dev/stdin < skills/_sql/health_check.sql
 ```
 
-The path `.apm/skills/_sql/<script>.sql` is relative to the project root where `apm install` was run.
+The path `skills/_sql/<script>.sql` is relative to the project root where `apm install` was run.

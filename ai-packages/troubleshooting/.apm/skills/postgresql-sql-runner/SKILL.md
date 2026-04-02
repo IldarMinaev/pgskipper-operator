@@ -74,7 +74,7 @@ kubectl exec -n <NAMESPACE> <MASTER_POD> -- env PGPASSWORD="$(kubectl get secret
 
 ## Available SQL Files
 
-Shared SQL scripts in `.apm/skills/_sql/`:
+Shared SQL scripts in `_sql/`:
 
 | File | Purpose |
 |------|---------|

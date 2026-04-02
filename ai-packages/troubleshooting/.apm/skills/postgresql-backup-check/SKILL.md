@@ -79,7 +79,7 @@ kubectl exec -n <NAMESPACE> $MASTER_POD -c pgbackrest-sidecar -- pgbackrest info
 Run the replication SQL file — covers WAL archive status, replication slots, inactive slot warnings, and WAL accumulation:
 
 ```bash
-kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < .apm/skills/_sql/replication.sql
+kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < _sql/replication.sql
 ```
 
 **Focus on**:
@@ -117,7 +117,7 @@ kubectl get configmap -n <NAMESPACE> -l app=postgres-backup-daemon -o yaml
 Run the storage SQL file — covers WAL directory size, database sizes, and temporary files alongside disk space metrics:
 
 ```bash
-kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < .apm/skills/_sql/storage.sql
+kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < _sql/storage.sql
 ```
 
 **Focus on**:

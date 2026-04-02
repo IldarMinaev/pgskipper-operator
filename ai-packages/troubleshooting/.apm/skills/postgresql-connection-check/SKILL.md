@@ -77,7 +77,7 @@ kubectl exec -n <NAMESPACE> $POOLER_POD -- env PGPASSWORD="$(kubectl get secret 
 Run the connections SQL file (path relative to repo root):
 
 ```bash
-kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < .apm/skills/_sql/connections.sql
+kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < _sql/connections.sql
 ```
 
 Or check key metrics:
