@@ -5,6 +5,7 @@ author: Qubership
 dependencies:
   apm:
   - git: IldarMinaev/troubleshooting-skill
+    path: ai-packages/troubleshooting
     ref: ai-skills
   mcp: []
 scripts: {}
