@@ -32,8 +32,8 @@ helm list -n <ns> --filter 'patroni'
 
 1. At the start of every session, run `kubernetes-context` then `pgskipper-context` to confirm cluster access, resolve the target namespace, and detect the deployment model (Helm vs ArgoCD)
 2. When the user describes a problem, identify which skill(s) match using the skill selection guide below
-3. Read the relevant `SKILL.md` file and follow its steps
-4. Reference shared skills (`patroni-reference`, `pgskipper-architecture`, `pg-credential-handling`) and SQL scripts in `_sql/` as needed
+3. Invoke the relevant skill by name and follow its steps
+4. Invoke shared skills (`patroni-reference`, `pgskipper-architecture`, `pg-credential-handling`) as needed; use the `sql` skill for shared SQL scripts
 5. If the issue spans multiple areas, combine skills (e.g., health-check + storage-check)
 
 ## Skill Selection Guide

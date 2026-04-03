@@ -15,18 +15,15 @@ Diagnose the health of pgskipper-operator infrastructure: CRDs, Helm releases, C
 - `helm` 3.x
 - Namespace where pgskipper-operator is deployed (default: `postgres`)
 
-**Read** [pgskipper-architecture](../pgskipper-architecture/SKILL.md) using the Read tool before proceeding — it contains operator component names, CRD names, and deployment conventions used in the steps below.
+Invoke the `pgskipper-architecture` skill before proceeding — it contains operator component names, CRD names, and deployment conventions used in the steps below.
 
-> **🔒 SECURITY**: Never expose passwords in command output. Always use inline credential retrieval: `env PGPASSWORD="$(kubectl get secret ... | base64 -d)"`. Never run `kubectl get secret` separately — it displays the password. See [pg-credential-handling](../pg-credential-handling/SKILL.md) for detailed patterns.
+> **🔒 SECURITY**: Never expose passwords in command output. Always use inline credential retrieval: `env PGPASSWORD="$(kubectl get secret ... | base64 -d)"`. Never run `kubectl get secret` separately — it displays the password. See the `pg-credential-handling` skill for detailed patterns.
 
-## Context: Verify Kubernetes Access
+## Prerequisites
 
-```bash
-kubectl config current-context
-kubectl get namespace <NAMESPACE>
-```
-
-Ask the user for the namespace if not known. Default is `postgres`.
+Before proceeding:
+1. Invoke the `kubernetes-context` skill to verify cluster access and resolve `<NAMESPACE>` (default: `postgres`).
+2. Invoke the `pgskipper-context` skill to verify CRD presence and detect deployment model (Helm vs ArgoCD).
 
 ## Step 1: Check CRDs
 

@@ -15,15 +15,18 @@ Identify performance bottlenecks in a PostgreSQL database: slow queries, high lo
 - Namespace where PostgreSQL is deployed (default: `postgres`)
 - `pg_stat_statements` extension (optional, for query-level stats)
 
-See [postgresql-sql-runner skill](../postgresql-sql-runner/SKILL.md) for SQL execution patterns.
+See the `postgresql-sql-runner` skill for SQL execution patterns.
 
-> **🔒 SECURITY**: Never expose passwords in command output. Always use inline credential retrieval: `env PGPASSWORD="$(kubectl get secret ... | base64 -d)"`. Never run `kubectl get secret` separately — it displays the password. See [pg-credential-handling](../pg-credential-handling/SKILL.md) for detailed patterns.
+> **🔒 SECURITY**: Never expose passwords in command output. Always use inline credential retrieval: `env PGPASSWORD="$(kubectl get secret ... | base64 -d)"`. Never run `kubectl get secret` separately — it displays the password. See the `pg-credential-handling` skill for detailed patterns.
 
-## Context: Verify Kubernetes Access and Find Master
+## Prerequisites
+
+Before proceeding:
+1. Invoke the `kubernetes-context` skill to verify cluster access and resolve `<NAMESPACE>` (default: `postgres`).
+2. Invoke the `pgskipper-context` skill to verify CRD presence and detect deployment model.
 
 ```bash
-# Find the master pod
-kubectl config current-context
+# Find the master pod (after kubernetes-context has confirmed access)
 MASTER_POD=$(kubectl get pods -n <NAMESPACE> -l pgtype=master -o jsonpath='{.items[0].metadata.name}')
 
 # Locate SQL scripts directory (deployed as sibling to this skill)

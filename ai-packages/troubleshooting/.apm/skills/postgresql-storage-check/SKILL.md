@@ -14,18 +14,15 @@ Diagnose storage health: PVC capacity and usage, disk usage inside Patroni pods,
 - `kubectl` with exec permissions
 - Namespace where PostgreSQL is deployed (default: `postgres`)
 
-See [pgskipper-architecture](../pgskipper-architecture/SKILL.md) for broader context. Note: data directory is discovered dynamically via `SHOW data_directory` in Step 2 — no need to look up the path manually.
+See the `pgskipper-architecture` skill for broader context. Note: data directory is discovered dynamically via `SHOW data_directory` in Step 2 — no need to look up the path manually.
 
-> **🔒 SECURITY**: Never expose passwords in command output. Always use inline credential retrieval: `env PGPASSWORD="$(kubectl get secret ... | base64 -d)"`. Never run `kubectl get secret` separately — it displays the password. See [pg-credential-handling](../pg-credential-handling/SKILL.md) for detailed patterns.
+> **🔒 SECURITY**: Never expose passwords in command output. Always use inline credential retrieval: `env PGPASSWORD="$(kubectl get secret ... | base64 -d)"`. Never run `kubectl get secret` separately — it displays the password. See the `pg-credential-handling` skill for detailed patterns.
 
-## Context: Verify Kubernetes Access and Find Pods
+## Prerequisites
 
-```bash
-kubectl config current-context
-MASTER_POD=$(kubectl get pods -n <NAMESPACE> -l pgtype=master -o jsonpath='{.items[0].metadata.name}')
-
-# Note: Do NOT retrieve password separately - use inline retrieval in each command (see examples below)
-```
+Before proceeding:
+1. Invoke the `kubernetes-context` skill to verify cluster access and resolve `<NAMESPACE>` (default: `postgres`).
+2. Invoke the `pgskipper-context` skill to verify CRD presence and detect deployment model.
 
 ## Step 1: PVC Status and Capacity
 
