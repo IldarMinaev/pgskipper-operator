@@ -23,6 +23,9 @@ Comprehensive health assessment of a PostgreSQL cluster running under Patroni in
 ```bash
 kubectl config current-context
 kubectl get namespace <NAMESPACE>
+
+# Locate SQL scripts directory (deployed as sibling to this skill)
+SQL_DIR=$(find . -maxdepth 5 -type d -name '_sql' 2>/dev/null | head -1)
 ```
 
 ## Step 1: Patroni Cluster Status
@@ -134,7 +137,7 @@ kubectl exec -n <NAMESPACE> $MASTER_POD -- du -sh "$DATA_DIR/base/" 2>/dev/null
 Run the replication SQL file — covers streaming replication lag, slots, WAL statistics, archive status, and inactive slot warnings:
 
 ```bash
-kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < _sql/replication.sql
+kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < "$SQL_DIR/replication.sql"
 ```
 
 ## Step 9: Database Health Indicators (SQL)
@@ -142,7 +145,7 @@ kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secr
 Run the health check SQL file — covers connections, replication lag, dead tuples, long-running queries, pending locks, replication slots, WAL archive, database sizes, and an aggregate health summary:
 
 ```bash
-kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < _sql/health_check.sql
+kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < "$SQL_DIR/health_check.sql"
 ```
 
 **Multi-database note**: `health_check.sql` reports cluster-level and `postgres` database stats. For application databases, also list them and note which need deeper investigation:
@@ -194,5 +197,5 @@ kubectl get endpoints -n <NAMESPACE>
 5. **PVC Pending**: Check StorageClass availability, PV provisioner health, storage quota.
 6. **High connection usage**: Check for connection leaks. Consider PgBouncer. See `postgresql-connection-check`.
 7. **High dead tuples**: Autovacuum may be lagging. Check `postgresql-performance-check`.
-8. **Pod OOMKilled**: Run `_sql/memory_requirements.sql` to check if PG memory config exceeds pod limits. Run `_sql/memory_intensive_queries.sql` to find queries spilling to disk. Increase memory limits in Helm values if needed.
+8. **Pod OOMKilled**: Run `$SQL_DIR/memory_requirements.sql` to check if PG memory config exceeds pod limits. Run `$SQL_DIR/memory_intensive_queries.sql` to find queries spilling to disk. Increase memory limits in Helm values if needed.
 9. **Backup daemon not running**: No endpoints for backup service. Check with `postgresql-backup-check`.

@@ -29,10 +29,11 @@ This `_sql/` directory is deployed as a sibling to the other skill directories. 
 Scripts are executed via psql stdin redirect from the skill steps:
 
 ```bash
+# SQL_DIR is set in each skill's context step:
+SQL_DIR=$(find . -maxdepth 5 -type d -name '_sql' 2>/dev/null | head -1)
+
 kubectl exec -i -n <NAMESPACE> $MASTER_POD -- \
   env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials \
     -o jsonpath='{.data.password}' | base64 -d)" \
-  psql -U postgres -d postgres -f /dev/stdin < _sql/health_check.sql
+  psql -U postgres -d postgres -f /dev/stdin < "$SQL_DIR/health_check.sql"
 ```
-
-The `_sql/` path above is relative to the skills installation directory. Resolve the full path based on your runtime — for example, `.claude/skills/_sql/health_check.sql` for Claude.

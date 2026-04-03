@@ -24,6 +24,9 @@ See [pgskipper-architecture](../pgskipper-architecture/SKILL.md) for broader con
 kubectl config current-context
 MASTER_POD=$(kubectl get pods -n <NAMESPACE> -l pgtype=master -o jsonpath='{.items[0].metadata.name}')
 
+# Locate SQL scripts directory (deployed as sibling to this skill)
+SQL_DIR=$(find . -maxdepth 5 -type d -name '_sql' 2>/dev/null | head -1)
+
 # Note: Do NOT retrieve password separately - use inline retrieval in each command (see examples below)
 ```
 
@@ -77,7 +80,7 @@ kubectl exec -n <NAMESPACE> $POOLER_POD -- env PGPASSWORD="$(kubectl get secret 
 Run the connections SQL file (path relative to repo root):
 
 ```bash
-kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < _sql/connections.sql
+kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < "$SQL_DIR/connections.sql"
 ```
 
 Or check key metrics:

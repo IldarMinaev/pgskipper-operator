@@ -24,6 +24,9 @@ See [pgskipper-architecture](../pgskipper-architecture/SKILL.md) for broader con
 kubectl config current-context
 MASTER_POD=$(kubectl get pods -n <NAMESPACE> -l pgtype=master -o jsonpath='{.items[0].metadata.name}')
 
+# Locate SQL scripts directory (deployed as sibling to this skill)
+SQL_DIR=$(find . -maxdepth 5 -type d -name '_sql' 2>/dev/null | head -1)
+
 # Note: Do NOT retrieve password separately - use inline retrieval in each command (see examples below)
 ```
 
@@ -70,7 +73,7 @@ kubectl exec -n <NAMESPACE> $MASTER_POD -- du -sh "$DATA_DIR/pg_tblspc/" 2>/dev/
 Run the storage SQL file (path relative to repo root):
 
 ```bash
-kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < _sql/storage.sql
+kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < "$SQL_DIR/storage.sql"
 ```
 
 Or check key metrics:
@@ -146,7 +149,7 @@ SELECT pg_drop_replication_slot('<slot_name>');
 Run the bloat estimation SQL file (path relative to repo root):
 
 ```bash
-kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < _sql/bloat_estimation.sql
+kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < "$SQL_DIR/bloat_estimation.sql"
 ```
 
 Or quick check:

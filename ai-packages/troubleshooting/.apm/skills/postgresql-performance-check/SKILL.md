@@ -37,7 +37,7 @@ SQL_DIR=$(find . -maxdepth 5 -type d -name '_sql' 2>/dev/null | head -1)
 Run the performance SQL file — covers slow query analysis (pg_stat_statements), active queries, connection state summary, cache hit ratio, table I/O statistics, unused indexes, vacuum health, and transaction throughput:
 
 ```bash
-kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < _sql/performance.sql
+kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < "$SQL_DIR/performance.sql"
 ```
 
 Review the output before proceeding. If the overview reveals a specific area of concern (locking, cache, vacuum), use the targeted steps below for deeper investigation.
@@ -119,7 +119,7 @@ LIMIT 15;
 Run the locks SQL file for comprehensive lock analysis (preferred — covers lock trees, advisory locks, and deadlock-prone patterns):
 
 ```bash
-kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < _sql/locks.sql
+kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < "$SQL_DIR/locks.sql"
 ```
 
 ## Step 6: Cache Hit Ratio (Targeted)
@@ -221,7 +221,7 @@ ORDER BY pg_total_relation_size(schemaname || '.' || relname) DESC;
 
 ## Common Issues and Remediation
 
-1. **Slow queries**: Check `EXPLAIN ANALYZE`, add missing indexes, rewrite sequential scans. Run `_sql/memory_intensive_queries.sql` to find queries spilling to disk (temp file usage) — candidates for `work_mem` tuning.
+1. **Slow queries**: Check `EXPLAIN ANALYZE`, add missing indexes, rewrite sequential scans. Run `memory_intensive_queries.sql` from the `_sql` skill directory (via `postgresql-sql-runner`) to find queries spilling to disk (temp file usage) — candidates for `work_mem` tuning.
 2. **Lock contention**: Identify the blocking query, consider killing it (with user approval)
 3. **Low cache hit ratio**: Increase `shared_buffers`, optimize queries to reduce I/O
 4. **Connection leaks**: Application needs connection pool fixes. Immediate: kill idle-in-txn connections > 1 hour

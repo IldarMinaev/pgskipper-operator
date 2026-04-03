@@ -173,7 +173,7 @@ done
 ## Common Issues and Remediation
 
 1. **Repeated FATAL: too many connections**: See `postgresql-connection-check` for connection leak diagnosis.
-2. **OOMKilled**: Run `_sql/memory_requirements.sql` to compare PG memory config against pod limits. Run `_sql/memory_intensive_queries.sql` to find queries spilling to disk. See `postgresql-performance-check` for runaway queries. Increase pod memory limits if config exceeds limits.
+2. **OOMKilled**: Run `memory_requirements.sql` and `memory_intensive_queries.sql` from the `_sql` skill directory via `postgresql-sql-runner`. See `postgresql-performance-check` for runaway queries. Increase pod memory limits if config exceeds limits.
 3. **Disk full errors**: See `postgresql-storage-check` for storage diagnosis and cleanup.
 4. **Unexpected failovers**: Check Patroni DCS (etcd/Kubernetes) connectivity. Network partitions can cause split-brain.
 5. **Repeated deadlocks**: Application needs transaction ordering fixes. Review conflicting queries.
