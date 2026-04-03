@@ -71,23 +71,6 @@ kubectl exec -i -n <NAMESPACE> <MASTER_POD> -- env PGPASSWORD="$(kubectl get sec
 kubectl exec -n <NAMESPACE> <MASTER_POD> -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -x -c "<SQL_QUERY>"
 ```
 
-## Available SQL Files
-
-Shared SQL scripts in `_sql/`:
-
-| File | Purpose |
-|------|---------|
-| `health_check.sql` | Overall health indicators |
-| `performance.sql` | Slow queries, cache, I/O stats |
-| `replication.sql` | Replication status, slots, WAL |
-| `connections.sql` | Connection state breakdown, leaks |
-| `storage.sql` | Database/table/index sizes, WAL dir |
-| `bloat_estimation.sql` | Dead tuples, vacuum health, bloat |
-| `locks.sql` | Lock analysis, blocked queries |
-| `configuration.sql` | Non-default settings, memory, WAL config |
-| `memory_requirements.sql` | PG memory estimates vs Kubernetes limits |
-| `memory_intensive_queries.sql` | Queries consuming excessive memory, temp file spills |
-
 ## Safety Rules
 
 1. **Read-only**: Only run SELECT, SHOW, and read-only functions

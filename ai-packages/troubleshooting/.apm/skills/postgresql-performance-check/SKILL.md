@@ -29,9 +29,6 @@ Before proceeding:
 # Find the master pod (after kubernetes-context has confirmed access)
 MASTER_POD=$(kubectl get pods -n <NAMESPACE> -l pgtype=master -o jsonpath='{.items[0].metadata.name}')
 
-# Locate SQL scripts directory (deployed as sibling to this skill)
-SQL_DIR=$(find . -maxdepth 5 -type d -name '_sql' 2>/dev/null | head -1)
-
 # Note: Do NOT retrieve password separately - use inline retrieval in each command (see examples below)
 ```
 
@@ -40,7 +37,7 @@ SQL_DIR=$(find . -maxdepth 5 -type d -name '_sql' 2>/dev/null | head -1)
 Run the performance SQL file — covers slow query analysis (pg_stat_statements), active queries, connection state summary, cache hit ratio, table I/O statistics, unused indexes, vacuum health, and transaction throughput:
 
 ```bash
-kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < "$SQL_DIR/performance.sql"
+kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < "$SKILL_DIR/performance.sql"
 ```
 
 Review the output before proceeding. If the overview reveals a specific area of concern (locking, cache, vacuum), use the targeted steps below for deeper investigation.
@@ -122,7 +119,7 @@ LIMIT 15;
 Run the locks SQL file for comprehensive lock analysis (preferred — covers lock trees, advisory locks, and deadlock-prone patterns):
 
 ```bash
-kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < "$SQL_DIR/locks.sql"
+kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < "$SKILL_DIR/locks.sql"
 ```
 
 ## Step 6: Cache Hit Ratio (Targeted)

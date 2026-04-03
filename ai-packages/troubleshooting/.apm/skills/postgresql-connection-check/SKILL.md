@@ -15,10 +15,6 @@ Before proceeding:
 1. Invoke the `kubernetes-context` skill to verify cluster access and resolve `<NAMESPACE>` (default: `postgres`).
 2. Invoke the `pgskipper-context` skill to verify CRD presence and detect deployment model.
 3. See the `pgskipper-architecture` skill for component names and namespace conventions.
-4. Locate SQL scripts directory (deployed as sibling to this skill)
-```bash
-SQL_DIR=$(find . -maxdepth 5 -type d -name '_sql' 2>/dev/null | head -1)
-```
 
 > **🔒 SECURITY**: Never expose passwords in command output. Always use inline credential retrieval: `env PGPASSWORD="$(kubectl get secret ... | base64 -d)"`. Never run `kubectl get secret` separately — it displays the password. See the `pg-credential-handling` skill for detailed patterns.
 
@@ -72,7 +68,7 @@ kubectl exec -n <NAMESPACE> $POOLER_POD -- env PGPASSWORD="$(kubectl get secret 
 Run the connections SQL file (path relative to repo root):
 
 ```bash
-kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < "$SQL_DIR/connections.sql"
+kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < "$SKILL_DIR/connections.sql"
 ```
 
 Or check key metrics:

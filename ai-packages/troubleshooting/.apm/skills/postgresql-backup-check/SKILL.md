@@ -21,11 +21,6 @@ See the `pgskipper-architecture` skill for broader context on component names an
 
 ## Prerequisites
 
-```bash
-# Locate SQL scripts directory (deployed as sibling to this skill)
-SQL_DIR=$(find . -maxdepth 5 -type d -name '_sql' 2>/dev/null | head -1)
-```
-
 Before proceeding:
 1. Invoke the `kubernetes-context` skill to verify cluster access and resolve `<NAMESPACE>` (default: `postgres`).
 2. Invoke the `pgskipper-context` skill to verify CRD presence and detect deployment model.
@@ -83,7 +78,7 @@ kubectl exec -n <NAMESPACE> $MASTER_POD -c pgbackrest-sidecar -- pgbackrest info
 Run the replication SQL file — covers WAL archive status, replication slots, inactive slot warnings, and WAL accumulation:
 
 ```bash
-kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < "$SQL_DIR/replication.sql"
+kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < "$SKILL_DIR/replication.sql"
 ```
 
 **Focus on**:
@@ -121,7 +116,7 @@ kubectl get configmap -n <NAMESPACE> -l app=postgres-backup-daemon -o yaml
 Run the storage SQL file — covers WAL directory size, database sizes, and temporary files alongside disk space metrics:
 
 ```bash
-kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < "$SQL_DIR/storage.sql"
+kubectl exec -i -n <NAMESPACE> $MASTER_POD -- env PGPASSWORD="$(kubectl get secret -n <NAMESPACE> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -f /dev/stdin < "$SKILL_DIR/storage.sql"
 ```
 
 **Focus on**:
