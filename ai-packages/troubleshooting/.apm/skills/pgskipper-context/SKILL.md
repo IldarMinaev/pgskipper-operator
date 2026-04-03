@@ -5,7 +5,7 @@ description: Verify pgskipper-operator installation and detect Helm vs ArgoCD de
 
 # pgskipper-operator Context Verification
 
-Run this skill after [`kubernetes-context`](../kubernetes-context/SKILL.md) to verify pgskipper-operator-specific prerequisites: Patroni CRD presence and deployment model detection.
+Run this skill after the `kubernetes-context` skill to verify pgskipper-operator-specific prerequisites: Patroni CRD presence and deployment model detection.
 
 ## Step 1: Verify pgskipper-operator is Deployed
 

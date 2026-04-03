@@ -14,14 +14,13 @@ Analyze Patroni and PostgreSQL container logs for error patterns including FATAL
 - `kubectl` with log access
 - Namespace where PostgreSQL is deployed (default: `postgres`)
 
-> **🔒 SECURITY**: Never expose passwords in command output. Always use inline credential retrieval: `env PGPASSWORD="$(kubectl get secret ... | base64 -d)"`. Never run `kubectl get secret` separately — it displays the password. See [pg-credential-handling](../pg-credential-handling/SKILL.md) for detailed patterns.
+> **🔒 SECURITY**: Never expose passwords in command output. Always use inline credential retrieval: `env PGPASSWORD="$(kubectl get secret ... | base64 -d)"`. Never run `kubectl get secret` separately — it displays the password. See the `pg-credential-handling` skill for detailed patterns.
 
-## Context: Verify Kubernetes Access
+## Prerequisites
 
-```bash
-kubectl config current-context
-kubectl get pods -n <NAMESPACE> -l app=patroni
-```
+Before proceeding:
+1. Invoke the `kubernetes-context` skill to verify cluster access and resolve `<NAMESPACE>` (default: `postgres`).
+2. Invoke the `pgskipper-context` skill to verify CRD presence and detect deployment model.
 
 ## Step 1: Recent Patroni/PostgreSQL Errors
 
