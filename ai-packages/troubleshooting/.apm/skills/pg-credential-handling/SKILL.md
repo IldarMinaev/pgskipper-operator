@@ -70,4 +70,4 @@ Stored in `replicator-credentials` secret. Used internally by Patroni for stream
 
 ## Additional Resources
 
-- **[patroni-reference](../patroni-reference/SKILL.md)** - Patroni-specific commands and PostgreSQL access patterns
+- **`patroni-reference`** skill — Patroni-specific commands and PostgreSQL access patterns

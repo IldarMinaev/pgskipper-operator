@@ -11,22 +11,16 @@ Comprehensive health assessment of a PostgreSQL cluster running under Patroni in
 
 ## Prerequisites
 
-- `kubectl` with exec permissions
-- Namespace where PostgreSQL is deployed (default: `postgres`)
-
-**Read** [patroni-reference](../patroni-reference/SKILL.md) using the Read tool before proceeding — it contains configuration paths, data directory locations, and command reference needed to execute the steps below. Also see [pgskipper-architecture](../pgskipper-architecture/SKILL.md) for broader context.
-
-> **🔒 SECURITY**: Never expose passwords in command output. Always use inline credential retrieval: `env PGPASSWORD="$(kubectl get secret ... | base64 -d)"`. Never run `kubectl get secret` separately — it displays the password. See [pg-credential-handling](../pg-credential-handling/SKILL.md) for detailed patterns.
-
-## Context: Verify Kubernetes Access
-
+Before proceeding:
+1. Invoke the `kubernetes-context` skill to verify cluster access and resolve `<NAMESPACE>` (default: `postgres`).
+2. Invoke the `pgskipper-context` skill to verify CRD presence and detect deployment model.
+3. Invoke the `patroni-reference` skill — it contains configuration paths, data directory locations, and command reference needed for the steps below. Also see the `pgskipper-architecture` skill for broader context.
+4. Locate SQL scripts directory (deployed as sibling to this skill)
 ```bash
-kubectl config current-context
-kubectl get namespace <NAMESPACE>
-
-# Locate SQL scripts directory (deployed as sibling to this skill)
 SQL_DIR=$(find . -maxdepth 5 -type d -name '_sql' 2>/dev/null | head -1)
 ```
+
+> **🔒 SECURITY**: Never expose passwords in command output. Always use inline credential retrieval: `env PGPASSWORD="$(kubectl get secret ... | base64 -d)"`. Never run `kubectl get secret` separately — it displays the password. See the `pg-credential-handling` skill for detailed patterns.
 
 ## Step 1: Patroni Cluster Status
 

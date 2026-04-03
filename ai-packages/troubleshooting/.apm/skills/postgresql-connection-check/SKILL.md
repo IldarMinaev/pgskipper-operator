@@ -11,24 +11,16 @@ Diagnose connection-layer health: PgBouncer (connection-pooler) status, pool uti
 
 ## Prerequisites
 
-- `kubectl` with exec permissions
-- Namespace where PostgreSQL is deployed (default: `postgres`)
-
-See [pgskipper-architecture](../pgskipper-architecture/SKILL.md) for broader context on component names and namespace conventions.
-
-> **🔒 SECURITY**: Never expose passwords in command output. Always use inline credential retrieval: `env PGPASSWORD="$(kubectl get secret ... | base64 -d)"`. Never run `kubectl get secret` separately — it displays the password. See [pg-credential-handling](../pg-credential-handling/SKILL.md) for detailed patterns.
-
-## Context: Verify Kubernetes Access and Find Pods
-
+Before proceeding:
+1. Invoke the `kubernetes-context` skill to verify cluster access and resolve `<NAMESPACE>` (default: `postgres`).
+2. Invoke the `pgskipper-context` skill to verify CRD presence and detect deployment model.
+3. See the `pgskipper-architecture` skill for component names and namespace conventions.
+4. Locate SQL scripts directory (deployed as sibling to this skill)
 ```bash
-kubectl config current-context
-MASTER_POD=$(kubectl get pods -n <NAMESPACE> -l pgtype=master -o jsonpath='{.items[0].metadata.name}')
-
-# Locate SQL scripts directory (deployed as sibling to this skill)
 SQL_DIR=$(find . -maxdepth 5 -type d -name '_sql' 2>/dev/null | head -1)
-
-# Note: Do NOT retrieve password separately - use inline retrieval in each command (see examples below)
 ```
+
+> **🔒 SECURITY**: Never expose passwords in command output. Always use inline credential retrieval: `env PGPASSWORD="$(kubectl get secret ... | base64 -d)"`. Never run `kubectl get secret` separately — it displays the password. See the `pg-credential-handling` skill for detailed patterns.
 
 ## Step 1: Check PgBouncer (connection-pooler) Deployment
 

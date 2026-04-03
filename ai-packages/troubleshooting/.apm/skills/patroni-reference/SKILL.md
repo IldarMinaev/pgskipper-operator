@@ -5,7 +5,7 @@ description: Patroni configuration paths, command reference, REST API endpoints,
 
 # Patroni Reference
 
-> **🔒 Security Note**: When accessing PostgreSQL with credentials, always follow the patterns in the security guidelines in [pg-credential-handling](../pg-credential-handling/SKILL.md) to avoid exposing passwords.
+> **🔒 Security Note**: When accessing PostgreSQL with credentials, always follow the patterns in the `pg-credential-handling` skill to avoid exposing passwords.
 
 ## patronictl Commands
 
@@ -88,7 +88,7 @@ kubectl exec -n <ns> <master-pod> -- psql -U postgres -d postgres -c "SELECT ver
 kubectl exec -n <ns> <master-pod> -- env PGPASSWORD="$(kubectl get secret -n <ns> postgres-credentials -o jsonpath='{.data.password}' | base64 -d)" psql -U postgres -d postgres -c "SELECT 1;"
 ```
 
-**Note**: The inline pattern above retrieves the password and uses it without exposing it in command output. See [pg-credential-handling](../pg-credential-handling/SKILL.md) for detailed patterns.
+**Note**: The inline pattern above retrieves the password and uses it without exposing it in command output. See the `pg-credential-handling` skill for detailed patterns.
 
 ## Common States and What They Mean
 
